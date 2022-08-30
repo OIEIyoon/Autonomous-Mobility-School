@@ -1,0 +1,41 @@
+clear; close all; clc;
+load path_data.mat
+fig1 = figure;
+
+fig1.Position = [10 10 1000 1000];
+plot(path(1,:), path(2,:), '--', 'color', [.95 .95 .1], 'linewidth', 3);  hold on;
+set(gca,'Color', [.1 .1 .1])
+plot(left_lane(1,:), left_lane(2,:), '-', 'color', [.9 .9 .9], 'linewidth', 8);
+plot(right_lane(1,:), right_lane(2,:), '-', 'color', [.9 .9 .9], 'linewidth', 8);
+grid on; hold on;
+axis equal; axis([-2.5 5.8 -2 5]);
+
+path_len = length(path(1,:));
+dt = 0.05;
+
+path_ext = [path, path];
+idx = 1360; 
+X = -1.4163;
+Y = 2.8;
+Yaw = 4.3;
+N = 20;
+ds = 5;
+
+[left_lane_ROI, right_lane_ROI] = Lane_ROI(left_lane, right_lane, idx, ds, N);
+[left_local, right_local, center_local] = Lane_Detection(X, Y, Yaw, left_lane_ROI, right_lane_ROI);
+[e_y, e_yaw, yaw_road, curv_road] = Route_Manager(center_local, Yaw);
+
+plot(left_lane_ROI(1,:), left_lane_ROI(2,:), 'bo');
+plot(right_lane_ROI(1,:), right_lane_ROI(2,:), 'bo');
+
+% figure; 
+plot(left_local(1,:), left_local(2,:)); hold on;
+plot(right_local(1,:), right_local(2,:))
+plot(center_local(1,:), center_local(2,:)); axis equal
+
+local_len = length(center_local(1,:));
+p1 = polyfit(center_local(1,1:floor(local_len/4)), center_local(2,1:floor(local_len/4)), 2);
+e_y = -p1(3);
+e_yaw = -p1(2);
+yaw_road = Yaw - e_yaw;
+curv_road = 2*p1(1)/(1+p1(2)^2)^1.5;

@@ -1,0 +1,78 @@
+clear all; clc; close all;
+%%
+ds = 0.01;
+X = 0;
+Y = 0;
+Yaw = 0;
+Curv = 0;
+map = [0 ; X ; Y ; Yaw ; Curv];
+%% Straight 1
+map = Map_Gen_Straight(map, 3, ds);
+
+%% Curve 1
+map = Map_Gen_Curve(map, 1.5, 180, 1/3, ds);
+
+%% Straight 2
+map = Map_Gen_Straight(map, 1.5, ds);
+
+%% L-Curve
+map = Map_Gen_Curve(map, -1.5, 30, 0, ds);
+map = Map_Gen_Curve(map, +1.5, 30, 0, ds);
+
+%% Straight  3
+map = Map_Gen_Curve(map, +1.7395, 180, 0, ds);
+
+%% Path for Rear Wheel
+
+%%
+path = map(2:3,:);
+
+
+%%
+W_road = 0.6/2;
+left_lane = [];
+right_lane = [];
+for i = 2:length(path(1,:))
+    tan_vec = path(1:2,i) - path(1:2,i-1);
+    nom_vec = [-tan_vec(2) ; tan_vec(1)]/norm(tan_vec);
+    left_lane = [left_lane, path(1:2,i) + nom_vec*W_road];
+    right_lane = [right_lane, path(1:2,i) - nom_vec*W_road];
+end
+% path = path - min(right_lane,[],2);
+% left_lane = left_lane - min(right_lane,[],2);
+% right_lane = right_lane - min(right_lane,[],2);
+
+%%
+fig1 = figure;
+fig1.Position = [10 10 1000 1000];
+plot(path(1,:), path(2,:), '--', 'color', [.95 .95 .1], 'linewidth', 3);  hold on;
+plot(left_lane(1,:), left_lane(2,:), '-', 'color', [.7 .7 .7], 'linewidth', 8);
+plot(right_lane(1,:), right_lane(2,:), '-', 'color', [.7 .7 .7], 'linewidth', 8);
+grid on; hold on;
+axis equal;
+
+h = animatedline('MaximumNumPoints', 5, 'Marker', 'o');
+for i = 1:length(path(1,:))
+    addpoints(h, path(1,i), path(2,i)); 
+    drawnow
+%     pause(0.001);
+end
+
+save('path_data', 'path', 'left_lane', 'right_lane', 'map');
+%%
+N = 20;
+ds = 5;
+s1 = [300 500 700 900 1100 1400];
+ang_dev = [5 2 0 -3 -5 -10];
+for i = 1:length(s1)
+    left1 = left_lane(:, s1:ds:s1+ds*N)
+    right1 = right_lane(:, s1:ds:s1+ds*N)
+    yaw = map(4,s1)+2*pi/180;
+    R = [cos(-yaw) -sin(-yaw) ; sin(-yaw) cos(-yaw)];
+    left_local = R*left1;
+    right_local = R*right1;
+    figure;
+    plot(left_local(1,:), left_local(2,:));hold on;
+    plot(right_local(1,:), right_local(2,:));
+axis equal
+

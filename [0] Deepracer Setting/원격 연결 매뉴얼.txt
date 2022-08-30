@@ -1,0 +1,45 @@
+                        			<원격 연결>
+------------------------------------------------------------------------------------------------------------------
+
+0. ssh 설치 >> 원격 pc에서 jupyter 켜기 위함
+(Deepracer에는 기본적으로 설치, 연결 위한 윈도우 pc에서도 설치 필요)
+(참고) https://codechacha.com/ko/ubuntu-install-openssh/
+ 
+cmd 
+ssh deepracer@192.168.0.213
+
+------------------------------------------------------------------------------------------------------------------
+
+1. jupyter 설치?
+sudo apt-get install jupyter
+
+2. jupyter 비밀번호
+>> local에서 명령어로 설정 (검색)
+`jupyter notebook password`
+1234
+
+3. 외부접속 허가
+jupyter notebook --generate-config
+gedit ~/.jupyter/jupyter_notebook_config.py
+
+c.NotebookApp.ip = 'localhost' (x) -> '*' + 주석 제거
+
+4. 실행
+jupyter notebook
+
+5. 방화벽 해제
+sudo ufw disable
+
+6. ifconfig Deepracer IP 확인 후,
+IP + :8888
+로 주피터 노트북 접속
+
+------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+* Deepracer 재설치 시 발생하는 문제
+Window에서 WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! 오류
+
+ex) ssh-keygen -R 192.168.0.213
+yes
+
+(참고) https://visu4l.tistory.com/entry/ssh-%EC%9B%90%EA%B2%A9-%EC%A0%91%EC%86%8D-%EC%97%90%EB%9F%ACWARNING-REMOTE-HOST-IDENTIFICATION-HAS-CHANGED

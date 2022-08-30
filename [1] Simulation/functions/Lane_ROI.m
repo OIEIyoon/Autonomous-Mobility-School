@@ -1,0 +1,9 @@
+function [left_lane_ROI, right_lane_ROI, closest_idx] = Lane_ROI(path, left_lane, right_lane, X, Y, dn, N)
+path_ext = [path, path];
+[~, idx] = min(vecnorm(path_ext-[X;Y],1));
+closest_idx = idx;
+idx = idx+10;
+left_lane_ext = [left_lane, left_lane];
+right_lane_ext = [right_lane, right_lane];
+left_lane_ROI = left_lane_ext(:, idx:dn:idx+dn*(N-1));
+right_lane_ROI = right_lane_ext(:, idx:dn:idx+dn*(N-1));
