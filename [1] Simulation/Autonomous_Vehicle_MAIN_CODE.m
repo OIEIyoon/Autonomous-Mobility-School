@@ -38,7 +38,7 @@ end
 
 %% Plot
 idx_temp = 0;
-for i = 2:1:iter
+for i = 2:4:iter
     subplot(5,4,[1,2,5,6,9,10]);
     addpoints(h_left_ROI, left_lane_ROI(2*i-1,1:2:N), left_lane_ROI(2*i,1:2:N));
     addpoints(h_right_ROI, right_lane_ROI(2*i-1,1:2:N), right_lane_ROI(2*i,1:2:N));
