@@ -9,17 +9,13 @@ function delta = Lateral_Control(e_y, e_yaw, Vx)
 % 각 오차 : e_yaw
 % gain : k1, k2
 
-k1 = 0;
-k2 = 0;
-delta = 0;
-
+k1 = 10;
+k2 = 8;
+delta = -k1*e_y - k2*e_yaw;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-k1 = 10;
-k2 = 8;
-delta = -k1*e_y - k2*e_yaw;
 
 L = 0.16;
 Ay_max = 1.2;
